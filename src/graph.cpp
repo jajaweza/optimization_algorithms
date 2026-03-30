@@ -1,0 +1,154 @@
+#include <graph.hpp>
+
+
+    std::ostream& operator<<(std::ostream& os, Graph g){
+    for(const auto& col : g._adjMat){
+        for(const auto& elem : col){
+            os << elem << ' ';
+        }
+        os << std::endl;
+    }
+    return os;
+}
+    bool operator<(Vertex first, Vertex second){ return first.key < second.key; }
+    bool operator==(Vertex first, Vertex second){ return first.key == second.key; }
+
+    template<typename T>
+    unsigned int find(std::vector<T> v, const T& val){
+        for(int i = 0; i < v.size(); ++i){
+            if(v[i] == val) return i;
+        }
+        return v.size();
+    }
+
+    Graph::Graph(Vertex v): _vertices(1, v){
+        _adjMat.emplace_back(1,0);
+    };
+
+    Graph::~Graph(){};
+
+    bool Graph::adjacent(Vertex v1, Vertex v2){
+        const auto idx1 = find(_vertices, v1);
+        const auto idx2 = find(_vertices, v2);
+        if((idx1 == _vertices.size()) || (idx2 == _vertices.size())){
+            return false;
+        }
+        
+        if(((_adjMat[idx1][idx2] != 0) || (_adjMat[idx2][idx1]) != 0)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    };
+
+    std::vector<Vertex> Graph::neighbours(const Vertex v)const {
+        const auto idx = find(_vertices, v);
+        std::vector<double> col = _adjMat[idx];
+        std::vector<Vertex> r;
+        if(idx == _vertices.size()){
+            return r;
+        }
+
+        for(unsigned int i = 0; i < col.size(); ++i){
+            if(col[i] != 0){
+                    r.emplace_back(_vertices[idx]);
+            } 
+        }
+        return r;
+    };
+
+    bool Graph::add_vertex(Vertex v){
+        _vertices.emplace_back(v);
+        _adjMat.emplace_back(std::vector<double>(_adjMat[0].size(), 0));
+        for(auto& item : _adjMat){
+            item.emplace_back(0);
+        }
+        return true;
+    };
+
+    bool Graph::remove_vertex(Vertex v){
+        std::vector<std::vector<double>> updatedAdjMat;
+        for(int i = 0; i < _adjMat.size()-1; ++i){
+            updatedAdjMat.emplace_back(_adjMat.size()-1, 0);
+        }
+        const auto idx = find(_vertices, v);
+        if(idx == _vertices.size()) return false;
+        for(unsigned int i = 0, m = 0; i < _adjMat.size(); ++i){
+            if(i != idx){
+                for(unsigned int j = 0, n = 0; j < _adjMat.size(); ++j){
+                    if(j != idx){
+                        updatedAdjMat[m][n] = _adjMat[i][j];
+                        ++n;
+                    }
+                }
+            ++m;
+            }
+        }
+        _adjMat = updatedAdjMat;
+        const auto it = std::find(_vertices.begin(), _vertices.end(), v);
+        if(it != _vertices.end()){
+            _vertices.erase(it);
+        }
+        return true;
+    };
+
+    bool Graph::add_edge(Vertex v1, Vertex v2, double val){
+        const auto it1 = std::find(_vertices.begin(), _vertices.end(), v1);
+        const auto it2 = std::find(_vertices.begin(), _vertices.end(), v2);
+
+        if((it1 != _vertices.end()) && (it2 != _vertices.end())){
+            set_edge(v1, v2, val);
+            return true;
+        }
+        else{
+            return false;
+        }
+    };
+
+    bool Graph::remove_edge(Vertex v1, Vertex v2){
+        const auto it1 = std::find(_vertices.begin(), _vertices.end(), v1);
+        const auto it2 = std::find(_vertices.begin(), _vertices.end(), v2);
+
+        if((it1 != _vertices.end()) && (it2 != _vertices.end())){
+            set_edge(v1, v2, 0);
+            return true;
+        }
+        else{
+            return false;
+        }
+    };
+
+    Vertex Graph::get_vertex(Vertex v) const{
+        return *std::find(_vertices.begin(), _vertices.end(), v);
+    };
+
+    void Graph::set_vertex(Vertex v, typeof(Vertex::key) val){
+        const auto id = find(_vertices, v);
+        if(id < _vertices.size()){
+            _vertices[id] = v;
+        }
+    };
+
+    double Graph::get_edge(Vertex v1, Vertex v2) const{
+        const auto idx1 = find(_vertices, v1);
+        const auto idx2 = find(_vertices, v2);
+        if((idx1 == _vertices.size()) || (idx2 == _vertices.size())){
+            return 0;
+        }
+        else{
+            return _adjMat[idx1][idx2];
+        }    
+    };
+
+    void Graph::set_edge(Vertex v1, Vertex v2, double val){
+        const auto idx1 = find(_vertices, v1);
+        const auto idx2 = find(_vertices, v2);
+        if((idx1 == _vertices.size()) || (idx2 == _vertices.size())){
+            return;
+        }
+        else{
+            _adjMat[idx1][idx2] = val;
+            _adjMat[idx2][idx1] = val;
+        }
+    };

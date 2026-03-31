@@ -13,4 +13,4 @@ else()
 endif()
 
 include_directories(inc)
-target_sources(aco PUBLIC src/graph.cpp src/main.cpp)
+target_sources(aco PUBLIC src/graph.cpp src/main.cpp src/utils.cpp)

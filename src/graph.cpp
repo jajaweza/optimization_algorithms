@@ -2,29 +2,29 @@
 #include <iterator>
 #include <stdexcept>
 
-std::ostream &operator<<(std::ostream &os, Graph g) {
+std::ostream &operator<<(std::ostream &os, const Graph &g) {
   for (const auto &col : g._adjMat) {
     for (const auto &elem : col) {
       os << elem << ' ';
     }
-    os << std::endl;
+    os << '\n';
   }
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os, std::vector<Vertex> v) {
+std::ostream &operator<<(std::ostream &os, const std::vector<Vertex> &v) {
   for (const auto &elem : v) {
     os << elem << " ";
   }
-  os << std::endl;
+  os << '\n';
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os, std::vector<double> v) {
+std::ostream &operator<<(std::ostream &os, const std::vector<double> &v) {
   for (const auto &elem : v) {
     os << elem << " ";
   }
-  os << std::endl;
+  os << '\n';
   return os;
 }
 
@@ -34,8 +34,9 @@ std::ostream &operator<<(std::ostream &os, std::vector<double> v) {
 
 template <typename T> unsigned int find(std::vector<T> v, const T &val) {
   for (int i = 0; i < v.size(); ++i) {
-    if (v[i] == val)
+    if (v[i] == val) {
       return i;
+    }
   }
   return v.size();
 }
@@ -44,7 +45,7 @@ Graph::Graph() : _vertices(1, Vertex(0)) { _adjMat.emplace_back(1, 0); };
 
 Graph::Graph(Vertex v) : _vertices(1, v) { _adjMat.emplace_back(1, 0); };
 
-Graph::~Graph(){};
+Graph::~Graph() {};
 
 bool Graph::adjacent(Vertex v1, Vertex v2) {
   const auto idx1 = find(_vertices, v1);
@@ -53,12 +54,7 @@ bool Graph::adjacent(Vertex v1, Vertex v2) {
       (idx2 == _vertices.size())) { // check if this should be OR or AND
     return false;
   }
-
-  if (((_adjMat[idx1][idx2] != 0) || (_adjMat[idx2][idx1]) != 0)) {
-    return true;
-  } else {
-    return false;
-  }
+  return ((_adjMat[idx1][idx2] != 0) || (_adjMat[idx2][idx1]) != 0);
 };
 
 std::vector<double> Graph::neighbours(const Vertex v) const {
@@ -76,21 +72,19 @@ std::vector<double> Graph::neighbours(const Vertex v) const {
     //     }
     // }
     // return r;
-  } else
-    throw std::runtime_error("Vertex doesnt exist!");
+  }
+  throw std::runtime_error{"Vertex doesnt exist!"};
 };
 
-bool Graph::add_vertex(Vertex v) {
+void Graph::add_vertex(Vertex v) {
   if (_vertices.end() == std::find(_vertices.begin(), _vertices.end(), v)) {
     _vertices.emplace_back(v);
     _adjMat.emplace_back(std::vector<double>(_adjMat[0].size(), 0));
     for (auto &item : _adjMat) {
       item.emplace_back(0);
     }
-    std::cout << "Added vertex with key: " << v << std::endl;
-    return true;
-  } else
-    return false;
+    std::cout << "Added vertex with key: " << v << '\n';
+  }
 };
 
 bool Graph::remove_vertex(Vertex v) {
@@ -135,9 +129,8 @@ bool Graph::add_edge(Vertex v1, Vertex v2, double val) {
   if ((it1 != _vertices.end()) && (it2 != _vertices.end())) {
     set_edge(v1, v2, val);
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 bool Graph::remove_edge(Vertex v1, Vertex v2) {
@@ -147,16 +140,16 @@ bool Graph::remove_edge(Vertex v1, Vertex v2) {
   if ((it1 != _vertices.end()) && (it2 != _vertices.end())) {
     set_edge(v1, v2, 0);
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 Vertex Graph::get_vertex(unsigned int id) const {
   const auto it = find_if(_vertices.begin(), _vertices.end(),
                           [id](Vertex v) { return v == id; });
-  if (it == _vertices.end())
-    throw std::runtime_error("Requested vertex doesnt exist!");
+  if (it == _vertices.end()) {
+    throw std::runtime_error{"Requested vertex doesnt exist!"};
+  }
   return *it;
 };
 
@@ -172,9 +165,8 @@ double Graph::get_edge(Vertex v1, Vertex v2) const {
   const auto idx2 = find(_vertices, v2);
   if ((idx1 == _vertices.size()) || (idx2 == _vertices.size())) {
     return 0;
-  } else {
-    return _adjMat[idx1][idx2];
   }
+  return _adjMat[idx1][idx2];
 };
 
 void Graph::set_edge(Vertex v1, Vertex v2, double val) {
@@ -182,8 +174,7 @@ void Graph::set_edge(Vertex v1, Vertex v2, double val) {
   const auto idx2 = find(_vertices, v2);
   if ((idx1 == _vertices.size()) || (idx2 == _vertices.size())) {
     return;
-  } else {
-    _adjMat[idx1][idx2] = val;
-    // _adjMat[idx2][idx1] = val;
   }
+  _adjMat[idx1][idx2] = val;
+  // _adjMat[idx2][idx1] = val;
 };

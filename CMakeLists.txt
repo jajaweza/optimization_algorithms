@@ -3,8 +3,14 @@ cmake_minimum_required(VERSION 4.0)
 project(aco)
 add_executable(aco)
 set_property(TARGET aco PROPERTY CXX_STANDARD 20)
+
 if(DEBUG)
-    add_compile_options(-Wall -Wextra -Wpedantic)
+    message("Compiling with extra debug flags")
+    set(CMAKE_CXX_CLANG_TIDY
+        clang-tidy;
+        -checks=bugprone-*,performance-*,readability-*
+    )
+    add_compile_options(-Wall -Wextra -Wpedantic -Wunused_ret)
     add_compile_definitions(NDEBUG=0)
     set(CMAKE_BUILD_TYPE Debug)
 

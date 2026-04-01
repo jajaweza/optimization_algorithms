@@ -1,0 +1,59 @@
+BasedOnStyle: LLVM
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Line length
+ColumnLimit: 100
+
+# Braces
+BreakBeforeBraces: Allman
+
+# Functions & control
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+
+# Spacing
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInContainerLiterals: false
+
+# Pointers & references
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Wrapping
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BreakBeforeBinaryOperators: NonAssignment
+
+# Alignment
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+
+# Comments
+ReflowComments: true
+
+# Namespace
+NamespaceIndentation: All
+
+# Switch/case
+IndentCaseLabels: true
+
+# Penalties (affects wrapping decisions)
+PenaltyBreakBeforeFirstCallParameter: 100
+PenaltyReturnTypeOnItsOwnLine: 200
+
+# C++ specifics
+Standard: Latest
+
+# Misc
+DerivePointerAlignment: false
+SortUsingDeclarations: true

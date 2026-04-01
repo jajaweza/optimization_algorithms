@@ -28,3 +28,4 @@ class Graph{
 
 std::ostream& operator<<(std::ostream& os, Graph g);
 std::ostream& operator<<(std::ostream& os, std::vector<Vertex> v);
+std::ostream& operator<<(std::ostream& os, std::vector<double> v);

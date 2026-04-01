@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/Users/piotrek/Documents/optimization_algorithms/build",
+  "command": "/usr/bin/c++ -DNDEBUG=0 -I/Users/piotrek/Documents/optimization_algorithms/inc -g -std=gnu++20 -arch arm64 -o CMakeFiles/aco.dir/src/graph.cpp.o -c /Users/piotrek/Documents/optimization_algorithms/src/graph.cpp",
+  "file": "/Users/piotrek/Documents/optimization_algorithms/src/graph.cpp",
+  "output": "CMakeFiles/aco.dir/src/graph.cpp.o"
+},
+{
+  "directory": "/Users/piotrek/Documents/optimization_algorithms/build",
+  "command": "/usr/bin/c++ -DNDEBUG=0 -I/Users/piotrek/Documents/optimization_algorithms/inc -g -std=gnu++20 -arch arm64 -o CMakeFiles/aco.dir/src/main.cpp.o -c /Users/piotrek/Documents/optimization_algorithms/src/main.cpp",
+  "file": "/Users/piotrek/Documents/optimization_algorithms/src/main.cpp",
+  "output": "CMakeFiles/aco.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/piotrek/Documents/optimization_algorithms/build",
+  "command": "/usr/bin/c++ -DNDEBUG=0 -I/Users/piotrek/Documents/optimization_algorithms/inc -g -std=gnu++20 -arch arm64 -o CMakeFiles/aco.dir/src/utils.cpp.o -c /Users/piotrek/Documents/optimization_algorithms/src/utils.cpp",
+  "file": "/Users/piotrek/Documents/optimization_algorithms/src/utils.cpp",
+  "output": "CMakeFiles/aco.dir/src/utils.cpp.o"
+}
+]

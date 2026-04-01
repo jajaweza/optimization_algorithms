@@ -5,15 +5,16 @@
 #include <random>
 
 Ant::Ant(Vertex start) : current_location(start), path(1, start) {
-    std::cout << "Created an ant with starting location: " << start << std::endl;
+  std::cout << "Created an ant with starting location: " << start << std::endl;
 }
 
-AntColonyOpt::AntColonyOpt(Graph& g, unsigned int ant_count)
-    : g(g), trail_levels(g._adjMat.size(), 1), alpha(1), beta(1), q(1), decay(0.2) {
-        for(int i = 0; i < ant_count; ++i){
-            ants.emplace_back(0);
-        }
-    }
+AntColonyOpt::AntColonyOpt(Graph &g, unsigned int ant_count)
+    : g(g), trail_levels(g._adjMat.size(), 1), alpha(1),
+      beta(1), q(1), decay(0.2) {
+  for(int i = 0; i < ant_count; ++i){
+      ants.emplace_back(0);
+  }
+}
 
 AntColonyOpt::AntColonyOpt() {}
 
@@ -30,58 +31,69 @@ std::vector<std::vector<double>> AntColonyOpt::get_possible_moves() {
     // }
   }
 
-// for testing purposes
-//   std::cout << "found possible moves: " << std::endl;
-//   for(const auto& item : r){
-//     std::cout << item << ' ';
-//   }
-//   std::cout << std::endl;
+  // for testing purposes
+  //   std::cout << "found possible moves: " << std::endl;
+  //   for(const auto& item : r){
+  //     std::cout << item << ' ';
+  //   }
+  //   std::cout << std::endl;
 
   return ants_neighbours;
 }
 std::vector<double>
-AntColonyOpt::calculate_move_probabilities(std::vector<double> possible_moves) {
+AntColonyOpt::calculate_move_probabilities(std::vector<double> possible_moves,
+                                           unsigned int ant_nr) {
   std::vector<double> probabilities;
   double sum = 0;
 
-// for testing purposes
-//   std::cout << "calculating prob for following moves: " << std::endl;
-//   for(const auto& item : possible_moves){
-//     std::cout << item << " ";
-//   }
-//   std::cout << std::endl;
-
-  for (int i = 0; i < possible_moves.size(); ++i) {
-    if(possible_moves[i] != 0){
-        double tau = std::pow(trail_levels[i], alpha);
-        double eta = std::pow(1.0 / possible_moves[i], beta);
-        sum += tau * eta;
-    }
-  }
+  // for testing purposes
+  //   std::cout << "calculating prob for following moves: " << std::endl;
+  //   for(const auto& item : possible_moves){
+  //     std::cout << item << " ";
+  //   }
+  //   std::cout << std::endl;
   double tau = 0, eta = 0, p = 0;
-
+  const auto current_ant = ants.at(ant_nr);
   for (int i = 0; i < possible_moves.size(); ++i) {
-    if(possible_moves[i] == 0) {
-        probabilities.emplace_back(0);
-    }
-    else{
-        tau = std::pow(trail_levels[i], alpha);
-        eta = std::pow(possible_moves[i], -1*beta);
-        p = tau * eta / sum;
-        probabilities.emplace_back(p);
-
-        // for testing purposes
-        // std::cout << "calculated " << i << "th probability: " << p << std::endl;
-        // std::cout << "calculated tau: " << tau << ", calculated eta: " << eta << std::endl;
-        // std::cout << "sum = " << sum << std::endl;
+    if (current_ant.path.end() ==
+        std::find(current_ant.path.begin(), current_ant.path.end(), i)) {
+      tau = std::pow(trail_levels[i], alpha);
+      eta = std::pow(1.0 / possible_moves[i], beta);
+      sum += tau * eta;
     }
   }
+
+  for (int i = 0; i < possible_moves.size(); ++i) {
+    if (current_ant.path.end() ==
+        std::find(current_ant.path.begin(), current_ant.path.end(), i)) {
+      tau = std::pow(trail_levels[i], alpha);
+      eta = std::pow(possible_moves[i], -1 * beta);
+      p = tau * eta / sum;
+      probabilities.emplace_back(p);
+
+      // for testing purposes
+      // std::cout << "calculated " << i << "th probability: " << p <<
+      // std::endl; std::cout << "calculated tau: " << tau << ", calculated eta:
+      // " << eta << std::endl; std::cout << "sum = " << sum << std::endl;
+    } else {
+      probabilities.emplace_back(0);
+    }
+  }
+  double prob_sum{0};
+  std::cout << "calculated probabilities: " << std::endl;
+  for (int i = 0; i < probabilities.size(); ++i) {
+    std::cout << "probability to go to " << i << " vertex is "
+              << probabilities.at(i) << std::endl;
+    prob_sum += probabilities.at(i);
+  }
+  std::cout << "sum of calculated probabilities: " << prob_sum << std::endl;
   return probabilities;
 }
 void AntColonyOpt::move_ants() {
   const std::vector<std::vector<double>> possibilities = get_possible_moves();
   for (int i = 0; i < ants.size(); ++i) {
-    const auto probabilities = calculate_move_probabilities(possibilities[i]);
+    const auto probabilities =
+        calculate_move_probabilities(possibilities[i], i);
     std::discrete_distribution<int> distrib(probabilities.begin(),
                                             probabilities.end());
     // for testing purposes
@@ -101,8 +113,8 @@ void AntColonyOpt::update_trail_levels() {
   for (int i = 0; i < ants.size(); ++i) {
     const auto last = std::prev(ants[i].path.end(), 1);
     const auto second_to_last = std::prev(ants[i].path.end(), 2);
-    trail_levels[i] =
-        (1 - decay) * trail_levels[i] + q / g.get_edge(*second_to_last, *last);
+    trail_levels.at(ants[i].current_location) =
+        (1 - decay) * trail_levels.at(ants[i].current_location) + q / g.get_edge(*second_to_last, *last);
   }
   return;
 }

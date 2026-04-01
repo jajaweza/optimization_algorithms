@@ -22,7 +22,7 @@ class AntColonyOpt{
         }
     }
     std::vector<std::vector<double>> get_possible_moves();
-    std::vector<double> calculate_move_probabilities(std::vector<double> possible_moves);
+    std::vector<double> calculate_move_probabilities(std::vector<double> possible_moves, unsigned int ant_number);
     void move_ants();
     void update_trail_levels();
 

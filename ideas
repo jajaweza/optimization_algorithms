@@ -1,0 +1,13 @@
+currently implemented:
+ - agents CANT visit same node twice (probability = 0)
+ - agents have to visit all nodes
+ - agents dont return to starting node
+
+ideas to be implemented:
+ - start with groups of agents (each group represents a vehicle in the problem)
+ - each group has to have constraints on distance travelled (first idea is to have a constraint on distance travelled by all groups and divide it equally over them)
+  -- when a group visits nodes that are closer they can visit more nodes
+  -- find out the lower bound on the total distance travelled constraint (it somehow corresponds to distances in the matrix), probably upper bound is not needed (in theory) to make the problem solvable
+ - when a group is done visiting nodes (each agent from group has returned to starting node), get the most often chosen path and remove its nodes from general graph
+ - get rid of unnecessary referrences to objects, use smart pointers
+ - use value initialization instead of copying (operator=) wherever possible

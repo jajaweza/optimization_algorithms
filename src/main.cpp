@@ -66,8 +66,8 @@ int main(int argc, char **argv) {
 
   std::cout << "############ Beginning of Ant Colony Optimizaiton tests "
                "############\n";
-  AntColonyOpt aco(g1, 1);
-  const unsigned int steps{10};
+  AntColonyOpt aco(g1, 20);
+  const unsigned int steps{4};
   for(int i = 0; i < steps; ++i){
     aco.run();
   }

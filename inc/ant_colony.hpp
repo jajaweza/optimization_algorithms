@@ -1,41 +1,55 @@
 #pragma once
+
 #include "graph.hpp"
-#include <memory>
-#include <utils.hpp>
 #include <vector>
 
-#define DECAY 0.2
+// using Vertex = int;
 
 struct Ant {
-  Ant();
-  Ant(Vertex start);
   Vertex current_location;
-  std::vector<Vertex> path;
+
+  // Current route being built
+  std::vector<Vertex> current_route;
+
+  // All routes (each = one driver)
+  std::vector<std::vector<Vertex>> routes;
+
+  // Distance per driver
+  std::vector<double> route_distances;
+
+  // Total solution cost
+  double total_distance;
+
+  Ant(Vertex start);
 };
 
 class AntColonyOpt {
-public:
-  AntColonyOpt();
-  AntColonyOpt(Graph &g, unsigned int ant_count);
-  std::vector<Vertex> run();
-  void print_results() {
-    for (const auto &ant : ants) {
-      std::cout << ant.path;
-    }
-  }
-  std::vector<std::vector<double>> get_possible_moves();
-  std::vector<double>
-  calculate_move_probabilities(std::vector<double> possible_moves,
-                               unsigned int ant_nr);
-  void move_ants();
-  void update_trail_levels();
-  std::vector<unsigned int> choose_best_path();
+private:
+  Graph &g;
+
+  // Pheromone on EDGES (important change)
+  std::vector<std::vector<double>> trail_levels;
 
   std::vector<Ant> ants;
-  std::vector<double> trail_levels; // each edge in graph has its trail level
-  Graph g;
-  double q; // constant used to calculate trail level update
+
   double alpha;
   double beta;
+  double q;
   double decay;
+
+  std::vector<double> calculate_move_probabilities(
+      const std::vector<double> &distances,
+      unsigned int ant_nr,
+      const std::vector<bool> &visited);
+
+  void construct_solution(Ant &ant);
+
+public:
+  AntColonyOpt(Graph &g, unsigned int ant_count);
+
+  void move_ants();
+  void update_trail_levels();
+
+  // Now returns multiple routes (VRP solution)
+  std::vector<std::vector<Vertex>> run();
 };

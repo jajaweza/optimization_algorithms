@@ -5,7 +5,7 @@
 #include <utils.hpp>
 
 #define ANT_COUNT 10
-#define GRAPH_SIZE 5
+#define GRAPH_SIZE 20
 #define STEPS (GRAPH_SIZE - 1)
 
 int main(int argc, char **argv) {
@@ -71,16 +71,20 @@ int main(int argc, char **argv) {
   std::cout << "############ Beginning of Ant Colony Optimizaiton tests "
                "############\n";
   AntColonyOpt aco(g1, ANT_COUNT);
-  const unsigned int steps{STEPS};
-  for (int i = 0; i < steps; ++i) {
-    aco.run();
-  }
-  aco.print_results();
-  const auto result = aco.choose_best_path();
+  // const unsigned int steps{STEPS};
+  // for (int i = 0; i < steps; ++i) {
+  //   aco.run();
+  // }
+  // aco.print_results();
+  // const auto result = aco.choose_best_path();
+  const auto result = aco.run();
   std::cout << "The optimal path found is:" << '\n';
   for (const auto &item : result) {
-    std::cout << item << " -> ";
+    for(const auto& subitem : item){
+      std::cout << subitem << " -> ";
+    }
+    std::cout << '\n';
   }
-  std::cout << '0' << '\n';
+  // std::cout << '0' << '\n';
   return 0;
 }

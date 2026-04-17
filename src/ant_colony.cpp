@@ -85,7 +85,6 @@ void AntColonyOpt::construct_solution(Ant& ant)
         if (!any_unvisited)
             break;
 
-        // Start new route (new driver)
         ant.current_route     = {DEPOT};
         ant.current_location  = DEPOT;
         double route_distance = 0.0;
@@ -104,13 +103,11 @@ void AntColonyOpt::construct_solution(Ant& ant)
             std::discrete_distribution<int> distrib(probabilities.begin(), probabilities.end());
             extern std::mt19937             gen;
             int                             next = distrib(gen);
-            // No valid move → return to depot
             if (route_distance + g.get_edge(ant.current_location, next) > MAX_DISTANCE)
             {
                 break;
             }
 
-            // Move
             ant.current_route.push_back(next);
             route_distance += g.get_edge(ant.current_location, next);
 
@@ -118,7 +115,6 @@ void AntColonyOpt::construct_solution(Ant& ant)
             visited[next]        = true;
         }
 
-        // Return to depot
         ant.current_route.push_back(DEPOT);
         route_distance += g.get_edge(ant.current_location, DEPOT);
 
@@ -143,7 +139,6 @@ void AntColonyOpt::move_ants()
 void AntColonyOpt::update_trail_levels()
 {
 
-    // Evaporation
     for (int i = 0; i < trail_levels.size(); ++i)
     {
         for (int j = 0; j < trail_levels.size(); ++j)
@@ -152,7 +147,6 @@ void AntColonyOpt::update_trail_levels()
         }
     }
 
-    // Deposit
     for (const auto& ant : ants)
     {
         double contribution = q / ant.total_distance;
@@ -176,7 +170,6 @@ std::vector<std::vector<Vertex>> AntColonyOpt::run()
     move_ants();
     update_trail_levels();
 
-    // Return best solution
     const Ant* best      = nullptr;
     double     best_cost = std::numeric_limits<double>::max();
 

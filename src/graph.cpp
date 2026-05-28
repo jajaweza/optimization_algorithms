@@ -40,8 +40,29 @@ template <typename T> unsigned int find(std::vector<T> v, const T &val) {
   }
   return v.size();
 }
+unsigned int Vertex::count = 0;
 
-Graph::Graph() : _vertices(1, Vertex(0)) { _adjMat.emplace_back(1, 0); };
+  Vertex::Vertex(){
+    id = count++;
+    if(id%3){
+      open = 9;
+      closed = 17;
+    }
+    else{
+      open = 2;
+      closed = 18;
+    }
+  }
+  bool Vertex::operator==(const Vertex& other){
+    return (id == other.id);
+  }
+
+  bool Vertex::operator==(const unsigned int& id){
+    return (this->id == id);
+  }
+
+
+Graph::Graph() : _vertices(1, Vertex()) { _adjMat.emplace_back(1, 0); };
 
 Graph::Graph(Vertex v) : _vertices(1, v) { _adjMat.emplace_back(1, 0); };
 
@@ -83,7 +104,7 @@ void Graph::add_vertex(Vertex v) {
     for (auto &item : _adjMat) {
       item.emplace_back(0);
     }
-    std::cout << "Added vertex with key: " << v << '\n';
+    // std::cout << "Added vertex with key: " << v << '\n';
   }
 };
 

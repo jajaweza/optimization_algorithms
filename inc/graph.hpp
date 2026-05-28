@@ -4,7 +4,16 @@
 #include <set>
 #include <vector>
 
-using Vertex = unsigned int;
+// using Vertex = unsigned int;
+struct Vertex{
+  static unsigned int count;
+  Vertex();
+  bool operator==(const Vertex& other);
+  bool operator==(const unsigned int& id);
+  unsigned int id;
+  unsigned int open;
+  unsigned int closed;
+};
 // bool operator<(Vertex first, Vertex second);
 
 class Graph {

@@ -11,11 +11,11 @@ void populate_graph(Graph& g, unsigned int n)
     std::uniform_real_distribution<double> distrib(LOWER_DISTNACE_LIMIT, UPPER_DISTNACE_LIMIT);
     for (int i = 1; i < n; ++i)
     {
-        g.add_vertex(i);
+        g.add_vertex(Vertex());
     }
-    std::cout << "Graph after adding vertices: \n" << g << '\n';
-    std::cout << "_vertices after adding vertices: \n";
-    std::cout << g._vertices;
+    // std::cout << "Graph after adding vertices: \n" << g << '\n';
+    // std::cout << "_vertices after adding vertices: \n";
+    // std::cout << g._vertices;
     for (unsigned int i = 0; i < n; ++i)
     {
         for (unsigned int j = 0; j < n; ++j)

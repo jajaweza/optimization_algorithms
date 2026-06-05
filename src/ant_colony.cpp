@@ -10,9 +10,11 @@
 
 static const int DEPOT = 0;
 // static const double DECAY        = 0.5;
-static const double MAX_DISTANCE = 20;
+static const double MAX_DISTANCE = 100;
 static const double ALPHA        = 1;
 static const double BETA         = 2;
+static const double max_decay = 0.9;
+static const double min_decay = 0.1;
 
 Ant::Ant(Vertex start) : current_location(start), current_route({start}), total_distance(0.0) {}
 
@@ -26,9 +28,24 @@ AntColonyOpt::AntColonyOpt(Graph& g, unsigned int ant_count)
     for (int i = 0; i < ant_count; ++i)
     {
         ants.emplace_back(g.get_vertex(DEPOT));
+        decay[i] =  min_decay + (max_decay - min_decay)*i/ant_count;
+    }
+}
+
+AntColonyOpt::AntColonyOpt(Graph& g, unsigned int ant_count, double alpha, double beta)
+    : g(g)
+    , trail_levels(g._adjMat.size(), std::vector<double>(g._adjMat.size(), 1.0))
+    , alpha(alpha)
+    , beta(beta)
+    , decay(ant_count)
+{
+    for (int i = 0; i < ant_count; ++i)
+    {
+        ants.emplace_back(g.get_vertex(DEPOT));
         decay[i] = 0.9 - 0.05 * i;
     }
 }
+
 double how_late(unsigned int time, const Vertex& place)
 {
     if(time < place.open) {
@@ -88,6 +105,7 @@ void AntColonyOpt::construct_solution(Ant& ant)
 {
 
     std::vector<bool> visited(g._adjMat.size(), false);
+    // std::cout << "visited.size() = " << visited.size() << '\n';
     visited[DEPOT] = true;
 
     while (true)
@@ -97,12 +115,14 @@ void AntColonyOpt::construct_solution(Ant& ant)
         {
             if (!visited[i])
             {
+                // std::cout << "the " << i << "th node unvisited, go back!\n";
                 any_unvisited = true;
                 break;
             }
         }
-        if (!any_unvisited)
+        if (!any_unvisited){
             break;
+        }
 
         ant.current_route     = {g.get_vertex(DEPOT)};
         ant.current_location  = g.get_vertex(DEPOT);
@@ -119,16 +139,17 @@ void AntColonyOpt::construct_solution(Ant& ant)
             //   std::cout << item << ' ';
             // }
             // std::cout << '\n';
-            if (std::accumulate(probabilities.begin(), probabilities.end(), 0.0) == 0.0)
+            if (std::accumulate(probabilities.begin(), probabilities.end(), 0.0) == 0.0){
                 break;
+            }
             std::discrete_distribution<int> distrib(probabilities.begin(), probabilities.end());
             extern std::mt19937             gen;
             int                             next          = distrib(gen);
             Vertex                          next_location = g.get_vertex(next);
-            // std::cout << "Rolled: " << next << " Chosen vertex with id: " << next_location.id <<
-            // '\n';
-            if (route_distance + g.get_edge(ant.current_location, next_location) > MAX_DISTANCE)
+            // std::cout << "still in the while true loop\n";
+            if (route_distance + g.get_edge(ant.current_location, next_location) >= MAX_DISTANCE)
             {
+                // std::cout << "breaking out of the while true loop!\n";
                 break;
             }
 
@@ -137,8 +158,8 @@ void AntColonyOpt::construct_solution(Ant& ant)
 
             ant.current_location = next_location;
             visited[next]        = true;
-            // std::cout << "Added location with id: " << next_location.id
-            //           << ", which increases the distance to " << route_distance << '\n';
+            // std::cout << "visited[" << next
+            //           << "] = " << visited[next] << '\n';
         }
 
         ant.current_route.push_back(g.get_vertex(DEPOT));

@@ -40,10 +40,10 @@ template <typename T> unsigned int find(std::vector<T> v, const T &val) {
   }
   return v.size();
 }
-unsigned int Vertex::count = 0;
-
   Vertex::Vertex(){
-    id = count++;
+    id = count;
+    // std::cout << "Vertex::count = " << count << '\n';
+    count++;
     if(id%3){
       open = 9;
       closed = 17;
@@ -62,7 +62,7 @@ unsigned int Vertex::count = 0;
   }
 
 
-Graph::Graph() : _vertices(1, Vertex()) { _adjMat.emplace_back(1, 0); };
+Graph::Graph() : _vertices(0, Vertex()) { _adjMat.emplace_back(1, 0); };
 
 Graph::Graph(Vertex v) : _vertices(1, v) { _adjMat.emplace_back(1, 0); };
 
@@ -169,7 +169,7 @@ Vertex Graph::get_vertex(unsigned int id) const {
   const auto it = find_if(_vertices.begin(), _vertices.end(),
                           [id](Vertex v) { return v == id; });
   if (it == _vertices.end()) {
-    throw std::runtime_error{"Requested vertex doesnt exist!"};
+    throw std::runtime_error{"Requested vertex " + std::to_string(id) + " doesnt exist!"};
   }
   return *it;
 };
@@ -199,3 +199,12 @@ void Graph::set_edge(Vertex v1, Vertex v2, double val) {
   _adjMat[idx1][idx2] = val;
   // _adjMat[idx2][idx1] = val;
 };
+
+void Graph::clear(){ 
+  Vertex::count = 0;
+  for(auto& elem : _adjMat){
+      elem.clear();
+  }
+  _adjMat.clear();
+  _vertices.clear();
+}

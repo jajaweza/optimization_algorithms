@@ -8,8 +8,9 @@ std::mt19937       gen(rd());
 
 void populate_graph(Graph& g, unsigned int n)
 {
+    g.clear();
     std::uniform_real_distribution<double> distrib(LOWER_DISTNACE_LIMIT, UPPER_DISTNACE_LIMIT);
-    for (int i = 1; i < n; ++i)
+    for (int i = 0; i < n; ++i)
     {
         g.add_vertex(Vertex());
     }

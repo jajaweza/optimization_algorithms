@@ -31,6 +31,7 @@ public:
   void set_vertex(Vertex, unsigned int);
   double get_edge(Vertex, Vertex) const;
   void set_edge(Vertex, Vertex, double);
+  void clear();
   std::vector<std::vector<double>> _adjMat;
   std::vector<Vertex> _vertices;
 };

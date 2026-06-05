@@ -32,6 +32,7 @@ class AntColonyOpt
 
   public:
     AntColonyOpt(Graph& g, unsigned int ant_count);
+    AntColonyOpt(Graph& g, unsigned int ant_count, double alpha, double beta);
 
     void                             move_ants();
     void                             update_trail_levels();

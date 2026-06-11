@@ -13,7 +13,7 @@
 #define PARAMETERS_COUNT 20
 #define STEPS (TUNING_GRAPH_SIZE - 1)
 #define TUNING 
-#define COMPLEXITY_TIMING 
+// #define COMPLEXITY_TIMING 
 unsigned int Vertex::count = 0;
 
 int main(int argc, char **argv) {
@@ -27,7 +27,8 @@ int main(int argc, char **argv) {
     
     double best_alpha = alpha_values[0];
     double best_beta = beta_values[0];
-    double min_exec_time = std::numeric_limits<double>::max();
+    double min_cost = std::numeric_limits<double>::max();
+    double cost = 0;
     Graph g1;
     populate_graph(g1, TUNING_GRAPH_SIZE);
 
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
         std::cerr << "Error: Could not open param_tuning.csv for writing.\n";
         return 1;
     }
-    tuning_csv << "Alpha,Beta,ExecutionTime_ms\n";
+    tuning_csv << "Alpha,Beta,Cost,ExecutionTime_ms\n";
 
     for (double alpha : alpha_values) {
         for (double beta : beta_values) {
@@ -47,17 +48,22 @@ int main(int argc, char **argv) {
             auto start_time = std::chrono::high_resolution_clock::now();
             const auto result = aco.run();
             auto end_time = std::chrono::high_resolution_clock::now();
-
+            cost = 0;
+            for(int i = 0; i < result.size(); ++i){
+                for(int j = 0; j < result[i].size()-1; ++j){
+                    cost += g1.get_edge(result[i][j], result[i][j+1]);
+                }
+            }
             std::chrono::duration<double, std::milli> elapsed = end_time - start_time;
             double current_time_ms = elapsed.count();
 
-            tuning_csv << alpha << "," << beta << "," << current_time_ms << "\n";
+            tuning_csv << alpha << "," << beta << "," << cost << "," << current_time_ms << "\n";
 
-            std::cout << "[Tuning Sweep] Alpha: " << alpha << " | Beta: " << beta 
+            std::cout << "[Tuning Sweep] Alpha: " << alpha << " | Beta: " << beta << ", Cost: " << cost
                       << " -> Time: " << current_time_ms << " ms\n";
 
-            if (current_time_ms < min_exec_time) {
-                min_exec_time = current_time_ms;
+            if (cost < min_cost) {
+                min_cost = cost;
                 best_alpha = alpha;
                 best_beta = beta;
             }
@@ -66,7 +72,7 @@ int main(int argc, char **argv) {
     tuning_csv.close();
 
     std::cout << "\n>>> Best Hyperparameters Selected: Alpha = " << best_alpha 
-              << ", Beta = " << best_beta << " (Lowest Time: " << min_exec_time << " ms)\n\n";
+              << ", Beta = " << best_beta << " (Lowest cost: " << min_cost << " ms)\n\n";
 #else
     double best_alpha = 1;
     double best_beta = 2;
